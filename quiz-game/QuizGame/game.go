@@ -1,11 +1,9 @@
 package QuizGame
 
 import (
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -37,30 +35,23 @@ func ReadCSV() {
 	t := flag.Int("timer", 10, "Set timer for quiz")
 	flag.Parse()
 
-	fp, err := os.ReadFile(*f)
+	quiz, err := ReadFile(f)
 	if err != nil {
 		panic(err)
 	}
-	r := csv.NewReader(strings.NewReader(string(fp)))
-	// fmt.Println(r)
 	var ans string
-
-	ques, err := r.ReadAll()
-	if err != nil {
-		panic(err)
-	}
-	total = len(ques)
-	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
-	fmt.Scanf("%s")
 	tc := make(chan bool)
 	go Timer(tc, *t)
 	go handler(tc)
-	for _, v := range ques {
-		fmt.Print(v[0], " :")
+	total = len(quiz.ques)
+	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
+	fmt.Scanf("%s")
+	for _, ques := range quiz.ques {
+		fmt.Print(ques.Question, " :")
 		fmt.Scanf("%s\n", &ans)
-		if v[1] == ans {
+		if ques.Solution == ans {
 			score++
 		}
 	}
-	fmt.Printf("\nQuiz Complete\nYour Score : %d out of %d \n", score, total)
+	fmt.Printf("\nQuiz Complete\nYour Score : %d out of %d \n", score, len(quiz.ques))
 }
