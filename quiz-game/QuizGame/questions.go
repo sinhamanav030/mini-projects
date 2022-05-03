@@ -2,8 +2,10 @@ package QuizGame
 
 import (
 	"bufio"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type Quiz struct {
@@ -14,6 +16,23 @@ type Quiz struct {
 type QuestionSet struct {
 	Question string
 	Solution string
+}
+
+func generateOrder(length int) []int {
+	rand.Seed(time.Now().Unix())
+	mp := make(map[int]bool, length)
+	id := make([]int, length)
+	for i := 0; i < length; i++ {
+		for {
+			tmp := rand.Intn(length)
+			if _, ok := mp[tmp]; ok == false {
+				mp[tmp] = true
+				id[i] = tmp
+				break
+			}
+		}
+	}
+	return id
 }
 
 func ReadFile(file *string) (Quiz, error) {
