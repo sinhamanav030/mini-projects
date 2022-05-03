@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	QuizGame.ReadCSV()
+	QuizGame.QuizGame()
 }
