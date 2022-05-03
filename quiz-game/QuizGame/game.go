@@ -3,7 +3,6 @@ package QuizGame
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -28,20 +27,6 @@ func handler(ch chan string, solution string) {
 	ch <- ans
 }
 
-func display(ques string) {
-	q := strings.Split(ques, ":")
-	for _, v := range q {
-		fmt.Println(v)
-	}
-}
-
-func checker(submit string, sol string) bool {
-	if strings.ToLower(submit) == strings.ToLower(sol) {
-		return true
-	}
-	return false
-}
-
 func generateOrder(length int) []int {
 	rand.Seed(time.Now().Unix())
 	mp := make(map[int]bool, length)
@@ -60,18 +45,6 @@ func generateOrder(length int) []int {
 }
 
 func Game(quiz QuizInterface, time int) {
-	// f := flag.String("fp", "./QuizGame/CSV/problems.csv", "Get problem file path")
-	// t := flag.Int("timer", 5, "Set timer for quiz")
-	// flag.Parse()
-
-	// displayMcq := WithDisplayQuesFunc(display)
-	// checkAns := WithAnswerCheckFunc(checker)
-	// quiz, err := NewQuiz(f, displayMcq, checkAns)
-	// quiz, err := NewQuiz(f)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// 	return
-	// }
 
 	//channel for timer
 	tc := make(chan bool)
@@ -84,7 +57,6 @@ func Game(quiz QuizInterface, time int) {
 	ques := quiz.GetQuestion()
 
 	id := generateOrder(len(ques))
-	// fmt.Println(id)
 
 	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
 	fmt.Scanf("%s")

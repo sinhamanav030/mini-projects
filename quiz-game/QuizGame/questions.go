@@ -8,7 +8,7 @@ import (
 )
 
 type QuizInterface interface {
-	ReadFile(file *string, sep string) (QuestionSlice, error)
+	ReadFile(file *string, opts ...string) (QuestionSlice, error)
 	SetQuestion(QuestionSlice)
 	GetQuestion() QuestionSlice
 	GetTotal() int
@@ -68,9 +68,14 @@ func (q *Quiz) GetTotal() int {
 	return q.Total
 }
 
-func (q *Quiz) ReadFile(file *string, sep string) (QuestionSlice, error) {
+func (q *Quiz) ReadFile(file *string, opts ...string) (QuestionSlice, error) {
 	f, err := os.Open(*file)
-	// sep := ","
+	var sep string
+	if len(opts) > 0 {
+		sep = opts[0]
+	} else {
+		sep = ","
+	}
 	if err != nil {
 		return nil, err
 	}

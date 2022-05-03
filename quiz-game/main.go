@@ -20,15 +20,24 @@ func main() {
 
 	// QuizGame.Game(&quiz, *t)
 
-	var mcq McqQuiz
+	// var mcq McqQuiz
 
-	ques, err := mcq.ReadFile(f, ",")
+	// ques, err := mcq.ReadFile(f, ",")
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// mcq.SetQuestion(ques)
+
+	// QuizGame.Game(&mcq, *t)
+	var jsMcq JsonHanlder
+
+	ques, err := jsMcq.ReadFile(f)
 	if err != nil {
 		panic(err)
 	}
+	jsMcq.SetQuestion(ques)
 
-	mcq.SetQuestion(ques)
-
-	QuizGame.Game(&mcq, *t)
+	QuizGame.Game(&jsMcq, *t)
 
 }

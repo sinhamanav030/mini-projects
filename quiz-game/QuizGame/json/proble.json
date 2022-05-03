@@ -1,0 +1,12 @@
+[
+    {
+        "question":"What is the workspace in GO?",
+        "options":["A. src contains GO source files organized into packages","B. pkg contains package objects","C. Both of these correct","D. None"],
+        "answer":"C"
+    },
+    {
+        "question":"How to use custom packages in GO language?",
+        "options":["A. Under the directory of your project place the directory with library files","B. Refer to the library using its path relative to the root of your workspace consisting the project","C. Both of these correct","D. None"],
+        "answer":"C"
+    }
+]

@@ -40,9 +40,14 @@ func (q *McqQuiz) GetTotal() int {
 	return q.Total
 }
 
-func (q *McqQuiz) ReadFile(file *string, sep string) (QuizGame.QuestionSlice, error) {
+func (q *McqQuiz) ReadFile(file *string, opts ...string) (QuizGame.QuestionSlice, error) {
 	f, err := os.Open(*file)
-	// sep := ","
+	var sep string
+	if len(opts) > 0 {
+		sep = opts[0]
+	} else {
+		sep = ","
+	}
 	if err != nil {
 		return nil, err
 	}
