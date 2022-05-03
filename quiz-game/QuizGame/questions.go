@@ -3,17 +3,24 @@ package QuizGame
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
 )
 
+type QuizInterface interface {
+	ReadFile(file *string, sep string) (QuestionSlice, error)
+	SetQuestion(QuestionSlice)
+	GetQuestion() QuestionSlice
+	GetTotal() int
+	DisplayQuesFunc(ques string)
+	CheckAnsFunc(submit string, sol string) bool
+}
+
 type Quiz struct {
-	ques            []QuestionSet
-	Total           int
-	displayQuesFunc func(ques string)
-	ansCheckFunc    func(submit string, ans string) bool
+	Ques  []QuestionSet
+	Total int
+	// displayQuesFunc func(ques string)
+	// ansCheckFunc    func(submit string, ans string) bool
 }
 
 type QuestionSet struct {
@@ -21,53 +28,51 @@ type QuestionSet struct {
 	Solution string
 }
 
-type QuizOption func(q *Quiz)
+type QuestionSlice []QuestionSet
 
-func WithDisplayQuesFunc(fn func(ques string)) QuizOption {
-	return func(q *Quiz) {
-		q.displayQuesFunc = fn
-	}
-}
+// type QuizOption func(q *Quiz)
 
-func WithAnswerCheckFunc(fn func(submit string, sol string) bool) QuizOption {
-	return func(q *Quiz) {
-		q.ansCheckFunc = fn
-	}
-}
+// func WithDisplayQuesFunc(fn func(ques string)) QuizOption {
+// 	return func(q *Quiz) {
+// 		q.displayQuesFunc = fn
+// 	}
+// }
 
-func defaultDisplayQuesFunc(ques string) {
+// func WithAnswerCheckFunc(fn func(submit string, sol string) bool) QuizOption {
+// 	return func(q *Quiz) {
+// 		q.ansCheckFunc = fn
+// 	}
+// }
+
+func (q *Quiz) DisplayQuesFunc(ques string) {
 	fmt.Print(ques, ":")
 }
 
-func defaultAnswerCheckFunc(submit string, sol string) bool {
+func (q *Quiz) CheckAnsFunc(submit string, sol string) bool {
 	if submit == sol {
 		return true
 	}
 	return false
 }
 
-func generateOrder(length int) []int {
-	rand.Seed(time.Now().Unix())
-	mp := make(map[int]bool, length)
-	id := make([]int, length)
-	for i := 0; i < length; i++ {
-		for {
-			tmp := rand.Intn(length)
-			if _, ok := mp[tmp]; ok == false {
-				mp[tmp] = true
-				id[i] = tmp
-				break
-			}
-		}
-	}
-	return id
+func (q *Quiz) SetQuestion(ques QuestionSlice) {
+	q.Ques = ques
+	q.Total = len(ques)
 }
 
-func NewQuiz(file *string, opts ...QuizOption) (Quiz, error) {
+func (q *Quiz) GetQuestion() QuestionSlice {
+	return q.Ques
+}
+
+func (q *Quiz) GetTotal() int {
+	return q.Total
+}
+
+func (q *Quiz) ReadFile(file *string, sep string) (QuestionSlice, error) {
 	f, err := os.Open(*file)
-	sep := ","
+	// sep := ","
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	defer f.Close()
@@ -87,11 +92,5 @@ func NewQuiz(file *string, opts ...QuizOption) (Quiz, error) {
 		}
 	}
 
-	q := Quiz{ques, total, defaultDisplayQuesFunc, defaultAnswerCheckFunc}
-
-	for _, opt := range opts {
-		opt(&q)
-	}
-
-	return q, nil
+	return ques, nil
 }
