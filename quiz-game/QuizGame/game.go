@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -25,12 +26,29 @@ func handler(ch chan string, solution string) {
 	ch <- ans
 }
 
+func display(ques string) {
+	q := strings.Split(ques, ":")
+	for _, v := range q {
+		fmt.Println(v)
+	}
+}
+
+func checker(submit string, sol string) bool {
+	if strings.ToLower(submit) == strings.ToLower(sol) {
+		return true
+	}
+	return false
+}
+
 func QuizGame() {
 	f := flag.String("fp", "./QuizGame/CSV/problems.csv", "Get problem file path")
-	t := flag.Int("timer", 10, "Set timer for quiz")
+	t := flag.Int("timer", 5, "Set timer for quiz")
 	flag.Parse()
 
-	quiz, err := ReadFile(f)
+	// displayMcq := WithDisplayQuesFunc(display)
+	// checkAns := WithAnswerCheckFunc(checker)
+	// quiz, err := NewQuiz(f, displayMcq, checkAns)
+	quiz, err := NewQuiz(f)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -47,14 +65,14 @@ func QuizGame() {
 	fmt.Scanf("%s")
 
 	for _, i := range id {
-		fmt.Print(quiz.ques[i].Question, ":")
+		quiz.displayQuesFunc(quiz.ques[i].Question)
 		go timer(tc, *t)
 		go handler(ans, quiz.ques[i].Solution)
 		select {
 		case <-tc:
 			fmt.Print("\n\nTime's Up\nit wont count, but have a go:")
 			sol := <-ans
-			if sol == quiz.ques[i].Solution {
+			if quiz.ansCheckFunc(sol, quiz.ques[i].Solution) {
 				notAtTimeScore++
 			}
 			fmt.Println()
@@ -62,7 +80,7 @@ func QuizGame() {
 		case sol := <-ans:
 			fmt.Print("\nYou're Fast\nGearing up next Question\n\n")
 			<-tc
-			if sol == quiz.ques[i].Solution {
+			if quiz.ansCheckFunc(sol, quiz.ques[i].Solution) {
 				score++
 			}
 			break

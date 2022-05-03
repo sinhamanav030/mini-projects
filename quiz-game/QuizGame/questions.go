@@ -2,6 +2,7 @@ package QuizGame
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"os"
 	"strings"
@@ -9,13 +10,40 @@ import (
 )
 
 type Quiz struct {
-	ques  []QuestionSet
-	Total int
+	ques            []QuestionSet
+	Total           int
+	displayQuesFunc func(ques string)
+	ansCheckFunc    func(submit string, ans string) bool
 }
 
 type QuestionSet struct {
 	Question string
 	Solution string
+}
+
+type QuizOption func(q *Quiz)
+
+func WithDisplayQuesFunc(fn func(ques string)) QuizOption {
+	return func(q *Quiz) {
+		q.displayQuesFunc = fn
+	}
+}
+
+func WithAnswerCheckFunc(fn func(submit string, sol string) bool) QuizOption {
+	return func(q *Quiz) {
+		q.ansCheckFunc = fn
+	}
+}
+
+func defaultDisplayQuesFunc(ques string) {
+	fmt.Print(ques, ":")
+}
+
+func defaultAnswerCheckFunc(submit string, sol string) bool {
+	if submit == sol {
+		return true
+	}
+	return false
 }
 
 func generateOrder(length int) []int {
@@ -35,7 +63,7 @@ func generateOrder(length int) []int {
 	return id
 }
 
-func ReadFile(file *string) (Quiz, error) {
+func NewQuiz(file *string, opts ...QuizOption) (Quiz, error) {
 	f, err := os.Open(*file)
 	sep := ","
 	if err != nil {
@@ -59,6 +87,11 @@ func ReadFile(file *string) (Quiz, error) {
 		}
 	}
 
-	return Quiz{ques, total}, nil
+	q := Quiz{ques, total, defaultDisplayQuesFunc, defaultAnswerCheckFunc}
 
+	for _, opt := range opts {
+		opt(&q)
+	}
+
+	return q, nil
 }
