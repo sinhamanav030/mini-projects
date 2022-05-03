@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -40,15 +39,19 @@ func ReadCSV() {
 
 	fp, err := os.ReadFile(*f)
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 	r := csv.NewReader(strings.NewReader(string(fp)))
+	// fmt.Println(r)
 	var ans string
 
 	ques, err := r.ReadAll()
+	if err != nil {
+		panic(err)
+	}
 	total = len(ques)
 	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
-	fmt.Scanf("")
+	fmt.Scanf("%s")
 	tc := make(chan bool)
 	go Timer(tc, *t)
 	go handler(tc)
