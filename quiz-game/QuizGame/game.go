@@ -104,7 +104,7 @@ func modeSetAll(id []int, quiz QuizInterface, time int, tc chan bool, ans chan s
 
 }
 
-func Game(quiz QuizInterface, time int, mode int) {
+func Game(quiz QuizInterface, time int, timerMode int) {
 
 	//channel for timer
 	tc := make(chan bool)
@@ -121,7 +121,7 @@ func Game(quiz QuizInterface, time int, mode int) {
 	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
 	fmt.Scanf("%s")
 
-	switch mode {
+	switch timerMode {
 	case 0:
 		modeSetIndividual(id, quiz, time, tc, ans)
 	case 1:
