@@ -38,6 +38,6 @@ func main() {
 	}
 	jsMcq.SetQuestion(ques)
 
-	QuizGame.Game(&jsMcq, *t)
+	QuizGame.Game(&jsMcq, *t, QuizGame.TimerModeAll)
 
 }

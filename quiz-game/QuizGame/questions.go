@@ -19,8 +19,6 @@ type QuizInterface interface {
 type Quiz struct {
 	Ques  []QuestionSet
 	Total int
-	// displayQuesFunc func(ques string)
-	// ansCheckFunc    func(submit string, ans string) bool
 }
 
 type QuestionSet struct {
@@ -29,20 +27,6 @@ type QuestionSet struct {
 }
 
 type QuestionSlice []QuestionSet
-
-// type QuizOption func(q *Quiz)
-
-// func WithDisplayQuesFunc(fn func(ques string)) QuizOption {
-// 	return func(q *Quiz) {
-// 		q.displayQuesFunc = fn
-// 	}
-// }
-
-// func WithAnswerCheckFunc(fn func(submit string, sol string) bool) QuizOption {
-// 	return func(q *Quiz) {
-// 		q.ansCheckFunc = fn
-// 	}
-// }
 
 func (q *Quiz) DisplayQuesFunc(ques string) {
 	fmt.Print(ques, ":")
@@ -87,9 +71,6 @@ func (q *Quiz) ReadFile(file *string, opts ...string) (QuestionSlice, error) {
 	ques := make([]QuestionSet, 0)
 	for scanner.Scan() {
 		s := strings.Split(scanner.Text(), sep)
-		// if len(s) != 2 {
-		// 	return Quiz{}, errors.New("invalid format")
-		// }
 		if len(s) == 2 {
 			temp := QuestionSet{s[0], s[1]}
 			ques = append(ques, temp)

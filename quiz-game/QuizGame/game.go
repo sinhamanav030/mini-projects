@@ -6,11 +6,17 @@ import (
 	"time"
 )
 
-var score, total int
+const (
+	TimerModeIndividual = 0
+	TimerModeAll        = 1
+)
+
+var score, total, notAtTimeScore int
 
 func init() {
 	score = 0
 	total = 0
+	notAtTimeScore = 0
 }
 
 func timer(ch chan bool, timer int) {
@@ -44,23 +50,8 @@ func generateOrder(length int) []int {
 	return id
 }
 
-func Game(quiz QuizInterface, time int) {
-
-	//channel for timer
-	tc := make(chan bool)
-
-	//channel for answers
-	ans := make(chan string)
-
-	score, notAtTimeScore := 0, 0
-
+func modeSetIndividual(id []int, quiz QuizInterface, time int, tc chan bool, ans chan string) {
 	ques := quiz.GetQuestion()
-
-	id := generateOrder(len(ques))
-
-	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
-	fmt.Scanf("%s")
-
 	for _, i := range id {
 		quiz.DisplayQuesFunc(ques[i].Question)
 		go timer(tc, time)
@@ -82,6 +73,59 @@ func Game(quiz QuizInterface, time int) {
 			}
 			break
 		}
+	}
+
+}
+
+func modeSetAll(id []int, quiz QuizInterface, time int, tc chan bool, ans chan string) {
+	ques := quiz.GetQuestion()
+	go timer(tc, time)
+	for _, i := range id {
+		quiz.DisplayQuesFunc(ques[i].Question)
+		go handler(ans, ques[i].Solution)
+		select {
+		case <-tc:
+			fmt.Print("\n\nTime's Up\n")
+			// sol := <-ans
+			// if quiz.CheckAnsFunc(sol, ques[i].Solution) {
+			// 	notAtTimeScore++
+			// }
+			fmt.Println()
+			return
+		case sol := <-ans:
+			fmt.Print("\nYou're Fast\nGearing up next Question\n\n")
+			// <-tc
+			if quiz.CheckAnsFunc(sol, ques[i].Solution) {
+				score++
+			}
+			break
+		}
+	}
+
+}
+
+func Game(quiz QuizInterface, time int, mode int) {
+
+	//channel for timer
+	tc := make(chan bool)
+
+	//channel for answers
+	ans := make(chan string)
+
+	// score, notAtTimeScore := 0, 0
+
+	ques := quiz.GetQuestion()
+
+	id := generateOrder(len(ques))
+
+	fmt.Println("Quiz is Ready! Are you ready to go:\nPress enter to start")
+	fmt.Scanf("%s")
+
+	switch mode {
+	case 0:
+		modeSetIndividual(id, quiz, time, tc, ans)
+	case 1:
+		modeSetAll(id, quiz, time, tc, ans)
 	}
 
 	fmt.Printf("\nQuiz Complete\nYour Score : %d out of %d \nQuestion Correctly Answered(in time + not in time) :%d\n", score, quiz.GetTotal(), score+notAtTimeScore)
