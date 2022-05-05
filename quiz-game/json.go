@@ -24,6 +24,7 @@ func (js *JsonHanlder) ReadFile(file *string, opts ...string) (QuizGame.Question
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(f)
 	dec := json.NewDecoder(f)
 	var ques []Ques
 	err = dec.Decode(&ques)

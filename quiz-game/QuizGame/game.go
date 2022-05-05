@@ -122,9 +122,9 @@ func Game(quiz QuizInterface, time int, timerMode int) {
 	fmt.Scanf("%s")
 
 	switch timerMode {
-	case 0:
+	case TimerModeIndividual:
 		modeSetIndividual(id, quiz, time, tc, ans)
-	case 1:
+	case TimerModeAll:
 		modeSetAll(id, quiz, time, tc, ans)
 	}
 

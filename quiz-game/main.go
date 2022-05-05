@@ -10,15 +10,15 @@ func main() {
 	t := flag.Int("timer", 5, "Set timer for quiz")
 	flag.Parse()
 
-	// var quiz QuizGame.Quiz
-	// ques, err := quiz.ReadFile(f, ",")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	var quiz QuizGame.Quiz
+	ques, err := quiz.ReadFile(f, ",")
+	if err != nil {
+		panic(err)
+	}
 
-	// quiz.SetQuestion(ques)
+	quiz.SetQuestion(ques)
 
-	// QuizGame.Game(&quiz, *t)
+	QuizGame.Game(&quiz, *t, 0)
 
 	// var mcq McqQuiz
 
@@ -30,14 +30,14 @@ func main() {
 	// mcq.SetQuestion(ques)
 
 	// QuizGame.Game(&mcq, *t)
-	var jsMcq JsonHanlder
+	// var jsMcq JsonHanlder
 
-	ques, err := jsMcq.ReadFile(f)
-	if err != nil {
-		panic(err)
-	}
-	jsMcq.SetQuestion(ques)
+	// ques, err := jsMcq.ReadFile(f)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// jsMcq.SetQuestion(ques)
 
-	QuizGame.Game(&jsMcq, *t, QuizGame.TimerModeAll)
+	// QuizGame.Game(&jsMcq, *t, QuizGame.TimerModeAll)
 
 }
