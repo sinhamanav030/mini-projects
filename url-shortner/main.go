@@ -86,7 +86,7 @@ func addUrl(w http.ResponseWriter, r *http.Request) {
 		pathsToUrls := getInfo()
 		mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 		handler = setHandler(mapHandler)
-		http.Redirect(w, r, "added info", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	tpl.Execute(w, nil)
