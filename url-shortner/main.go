@@ -9,14 +9,19 @@ import (
 	"url-shortner/urlshort"
 )
 
+type url struct {
+	path, url string
+}
+
 func main() {
 	mux := defaultMux()
 
 	// Build the MapHandler using the mux as the fallback
-	pathsToUrls := map[string]string{
-		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
-		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
-	}
+	// pathsToUrls := map[string]string{
+	// 	"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
+	// 	"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
+	// }
+	pathsToUrls := getInfo()
 	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
 	// Build the YAMLHandler using the mapHandler as the
