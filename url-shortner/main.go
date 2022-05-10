@@ -9,20 +9,26 @@ import (
 	"url-shortner/urlshort"
 )
 
+var (
+	handler http.HandlerFunc
+	mux     *http.ServeMux
+)
+
 func main() {
-	mux := defaultMux()
+	mux = defaultMux()
 
 	// Build the MapHandler using the mux as the fallback
-	pathsToUrls := map[string]string{
-		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
-		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
-	}
+	// pathsToUrls := map[string]string{
+	// 	"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
+	// 	"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
+	// }
+	pathsToUrls := getInfo()
 	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
 
-	var handler http.HandlerFunc
+	// var handler http.HandlerFunc
 
 	if len(os.Args) > 1 {
 		file := os.Args[1]
@@ -63,9 +69,31 @@ func main() {
 	http.ListenAndServe(":8080", handler)
 }
 
+func addUrl(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		url := r.FormValue("url")
+		path := r.FormValue("path")
+		addInfo(url, path)
+		// pathsToUrls := getInfo()
+		// mapHandler := urlshort.MapHandler(pathsToUrls, mux)
+		// handler = setHandler(mapHandler)
+		// setRoutes()
+		mux.HandleFunc(fmt.Sprintf("/%v", url), func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, path, http.StatusSeeOther)
+			fmt.Println(path)
+			return
+
+		})
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	tpl.Execute(w, nil)
+}
+
 func defaultMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", hello)
+	mux.HandleFunc("/add", addUrl)
 	return mux
 }
 
